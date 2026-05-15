@@ -3,13 +3,12 @@ import Post from "../models/Post.js";
 
 export const getRssFeed = async (req, res, next) => {
   try {
-    // Obtener las últimas 20 publicaciones publicadas
     const posts = await Post.find({ status: "published" })
       .sort({ publishAt: -1 })
       .limit(20);
 
     const siteUrl =
-      process.env.PUBLIC_SITE_URL || "https://trasmyfacil.netlify.app";
+      process.env.PUBLIC_SITE_URL || "https://trasmyfacial.netlify.app";
 
     const feed = new RSS({
       title: "TrasmyFácil - Noticias y novedades",
@@ -24,8 +23,9 @@ export const getRssFeed = async (req, res, next) => {
     });
 
     posts.forEach((post) => {
-      const postUrl = `${siteUrl}/informacion/${post._id}`;
-      feed.item({
+      const postUrl = `${siteUrl}/informacion/${post._id}`; // DEFINIR ANTES DE USAR
+
+      const item = {
         title: post.title,
         description:
           post.content.substring(0, 300) +
@@ -34,11 +34,29 @@ export const getRssFeed = async (req, res, next) => {
         guid: post._id,
         date: post.publishAt,
         categories: [post.category],
-      });
+      };
+
+      // Solo añadir enclosure si es imagen
+      if (post.mediaUrl && post.mediaType === "image") {
+        item.enclosure = {
+          url: post.mediaUrl,
+          type: "image/jpeg", // Ajusta según el formato real de la imagen
+        };
+        item.custom_elements = [
+          {
+            "media:content": {
+              _attr: { url: post.mediaUrl, medium: "image" },
+            },
+          },
+        ];
+      }
+      // Si es video, no añadimos enclosure (Facebook usará los metadatos de la página)
+
+      feed.item(item);
     });
 
     res.set("Content-Type", "application/rss+xml");
-    res.send(feed.xml());
+    res.send(feed.xml({ indent: true })); // Solo una vez al final
   } catch (error) {
     next(error);
   }
