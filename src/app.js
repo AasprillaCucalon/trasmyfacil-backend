@@ -9,6 +9,7 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import postRoutes from "./routes/post.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 import { getRssFeed } from "./controllers/rss.controller.js";
+import { getPostForSocial } from "./controllers/rss.controller.js";
 
 const app = express();
 
@@ -67,6 +68,7 @@ app.use("/api/requests", requestRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/upload", uploadRoutes);
 app.get("/rss.xml", getRssFeed);
+app.get("/informacion/:id", getPostForSocial);
 
 app.use(errorHandler);
 

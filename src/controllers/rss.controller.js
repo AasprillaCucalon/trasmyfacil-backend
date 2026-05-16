@@ -1,6 +1,22 @@
 import RSS from "rss";
 import Post from "../models/Post.js";
 
+export const getPostForSocial = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send("Publicación no encontrada");
+
+    const siteUrl =
+      process.env.PUBLIC_SITE_URL || "https://trasmyfacil.netlify.app";
+    const frontendUrl =
+      process.env.CLIENT_URL || "https://trasmyfacil.netlify.app";
+
+    res.render("post", { post, siteUrl, frontendUrl });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getRssFeed = async (req, res, next) => {
   try {
     const posts = await Post.find({ status: "published" })
