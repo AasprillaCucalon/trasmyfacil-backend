@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= post.title %> | TrasmyFácil</title>
+  <meta name="description" content="<%= post.content.substring(0, 160).replace(/"/g, '&quot;') %>">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= post.title %>">
+  <meta property="og:description" content="<%= post.content.substring(0, 160).replace(/"/g, '&quot;') %>">
+  <meta property="og:url" content="<%= siteUrl %>/informacion/<%= post._id %>">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="TrasmyFácil">
+  
+  <% if (post.mediaUrl && post.mediaType === 'image') { %>
+    <meta property="og:image" content="<%= post.mediaUrl %>">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+  <% } else { %>
+    <meta property="og:image" content="<%= siteUrl %>/assets/logo_web.png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+  <% } %>
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= post.title %>">
+  <meta name="twitter:description" content="<%= post.content.substring(0, 160).replace(/"/g, '&quot;') %>">
+  <% if (post.mediaUrl && post.mediaType === 'image') { %>
+    <meta name="twitter:image" content="<%= post.mediaUrl %>">
+  <% } else { %>
+    <meta name="twitter:image" content="<%= siteUrl %>/assets/logo_web.png">
+  <% } %>
+  
+  <!-- Redirigir a la SPA de React después de que los bots escaneen -->
+  <meta http-equiv="refresh" content="0; url=<%= frontendUrl %>/informacion/<%= post._id %>">
+</head>
+<body>
+  <div style="text-align: center; padding: 40px; font-family: sans-serif;">
+    <h1><%= post.title %></h1>
+    <p><%= post.content %></p>
+    <p>Si no eres redirigido automáticamente, <a href="<%= frontendUrl %>/informacion/<%= post._id %>">haz clic aquí</a>.</p>
+  </div>
+</body>
+</html>
