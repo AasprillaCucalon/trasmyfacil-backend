@@ -9,24 +9,23 @@
   <!-- Open Graph -->
   <meta property="og:title" content="<%= post.title %>">
   <meta property="og:description" content="<%= post.content.substring(0, 160).replace(/"/g, '&quot;') %>">
-  <meta property="og:url" content="<%= siteUrl %>/informacion/<%= post._id %>">
+  <meta property="og:url" content="<%= backendUrl %>/informacion/<%= post._id %>">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="TrasmyFácil">
   
   <% 
-    // Función para convertir URL relativa en absoluta si es necesario
     function toAbsoluteUrl(url) {
       if (!url) return '';
       if (url.startsWith('http://') || url.startsWith('https://')) return url;
-      if (url.startsWith('/')) return siteUrl + url;
-      return siteUrl + '/' + url;
+      if (url.startsWith('/')) return backendUrl + url;
+      return backendUrl + '/' + url;
     }
     
     let imageUrl = '';
     if (post.mediaUrl && post.mediaType === 'image') {
       imageUrl = toAbsoluteUrl(post.mediaUrl);
     } else {
-      imageUrl = siteUrl + '/assets/logo_web.png';
+      imageUrl = backendUrl + '/assets/logo_web.png';
     }
   %>
   
@@ -41,9 +40,6 @@
   <meta name="twitter:title" content="<%= post.title %>">
   <meta name="twitter:description" content="<%= post.content.substring(0, 160).replace(/"/g, '&quot;') %>">
   <meta name="twitter:image" content="<%= imageUrl %>">
-  
-  <!-- Redirigir a la SPA de React después de que los bots escaneen (1 segundo) -->
-  <meta http-equiv="refresh" content="1; url=<%= frontendUrl %>/informacion/<%= post._id %>">
 </head>
 <body>
   <div style="text-align: center; padding: 40px; font-family: sans-serif;">

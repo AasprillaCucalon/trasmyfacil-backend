@@ -6,12 +6,12 @@ export const getPostForSocial = async (req, res, next) => {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).send("Publicación no encontrada");
 
-    const siteUrl =
-      process.env.PUBLIC_SITE_URL || "https://trasmyfacil.netlify.app";
+    // Construir la URL base del backend a partir de la solicitud
+    const backendUrl = `${req.protocol}://${req.get("host")}`;
     const frontendUrl =
       process.env.CLIENT_URL || "https://trasmyfacil.netlify.app";
 
-    res.render("post", { post, siteUrl, frontendUrl });
+    res.render("post", { post, backendUrl, frontendUrl });
   } catch (error) {
     next(error);
   }
