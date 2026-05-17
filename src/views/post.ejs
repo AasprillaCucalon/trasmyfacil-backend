@@ -14,6 +14,7 @@
   <meta property="og:site_name" content="TrasmyFácil">
   
   <% 
+    // Función para convertir URLs relativas a absolutas usando backendUrl
     function toAbsoluteUrl(url) {
       if (!url) return '';
       if (url.startsWith('http://') || url.startsWith('https://')) return url;
@@ -21,15 +22,17 @@
       return backendUrl + '/' + url;
     }
     
-    let imageUrl = '';
+    // Imagen por defecto (usamos la URL pública del frontend para evitar problemas de acceso)
+    const defaultImageUrl = 'https://trasmyfacil.netlify.app/assets/logo_web.png';
+    let imageUrl = defaultImageUrl;
     let videoUrl = '';
     let videoType = '';
     
     if (post.mediaUrl && post.mediaType === 'image') {
       imageUrl = toAbsoluteUrl(post.mediaUrl);
     } else if (post.mediaUrl && (post.mediaType === 'video' || post.mediaType === 'reel')) {
-      // Para video, también necesitamos una imagen de vista previa (usaremos logo por defecto o la miniatura si la tuviera)
-      imageUrl = backendUrl + '/assets/logo_web.png';
+      // Para video, mantenemos la imagen por defecto (o podrías extraer una miniatura si la tuvieras)
+      imageUrl = defaultImageUrl;
       videoUrl = toAbsoluteUrl(post.mediaUrl);
       // Determinar tipo de video
       if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
@@ -37,19 +40,17 @@
       } else {
         videoType = 'video/mp4';
       }
-    } else {
-      imageUrl = backendUrl + '/assets/logo_web.png';
     }
   %>
   
-  <!-- Imagen (si es imagen o por defecto) -->
+  <!-- Imagen (siempre presente, ya sea la del post, una miniatura de video o la por defecto) -->
   <meta property="og:image" content="<%= imageUrl %>">
   <meta property="og:image:secure_url" content="<%= imageUrl %>">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   
-  <!-- Video (si es video o reel) -->
+  <!-- Video (solo si hay video o reel) -->
   <% if (videoUrl) { %>
     <meta property="og:video" content="<%= videoUrl %>">
     <meta property="og:video:secure_url" content="<%= videoUrl %>">
@@ -58,7 +59,7 @@
     <meta property="og:video:height" content="720">
   <% } %>
   
-  <!-- Twitter Card -->
+  <!-- Twitter Card (mejora la vista previa en redes) -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="<%= post.title %>">
   <meta name="twitter:description" content="<%= post.content.substring(0, 160).replace(/"/g, '&quot;') %>">
