@@ -84,23 +84,27 @@ export const getRssFeed = async (req, res, next) => {
       .sort({ publishAt: -1 })
       .limit(20);
 
-    const siteUrl =
-      process.env.PUBLIC_SITE_URL || "https://trasmyfacial.netlify.app";
+    // URL del backend (donde están los metadatos Open Graph)
+    const backendUrl =
+      process.env.BACKEND_URL || "https://trasmyfacil-backend.onrender.com";
+    // URL del frontend (para el logo)
+    const frontendUrl =
+      process.env.PUBLIC_SITE_URL || "https://trasmyfacil.netlify.app";
 
     const feed = new RSS({
       title: "TrasmyFácil - Noticias y novedades",
       description:
         "Información actualizada sobre trámites administrativos, citas, SEPE, Extranjería, Seguridad Social y más.",
-      feed_url: `${siteUrl}/rss.xml`,
-      site_url: siteUrl,
-      image_url: `${siteUrl}/assets/logo_web.png`,
+      feed_url: `${backendUrl}/rss.xml`,
+      site_url: backendUrl,
+      image_url: `${frontendUrl}/assets/logo_web.png`,
       language: "es",
       copyright: `TrasmyFácil ${new Date().getFullYear()}`,
       pubDate: new Date(),
     });
 
     posts.forEach((post) => {
-      const postUrl = `${siteUrl}/informacion/${post._id}`; // DEFINIR ANTES DE USAR
+      const postUrl = `${backendUrl}/informacion/${post._id}`;
 
       const item = {
         title: post.title,
@@ -113,11 +117,10 @@ export const getRssFeed = async (req, res, next) => {
         categories: [post.category],
       };
 
-      // Solo añadir enclosure si es imagen
       if (post.mediaUrl && post.mediaType === "image") {
         item.enclosure = {
           url: post.mediaUrl,
-          type: "image/jpeg", // Ajusta según el formato real de la imagen
+          type: "image/jpeg",
         };
         item.custom_elements = [
           {
@@ -127,13 +130,12 @@ export const getRssFeed = async (req, res, next) => {
           },
         ];
       }
-      // Si es video, no añadimos enclosure (Facebook usará los metadatos de la página)
 
       feed.item(item);
     });
 
     res.set("Content-Type", "application/rss+xml");
-    res.send(feed.xml({ indent: true })); // Solo una vez al final
+    res.send(feed.xml({ indent: true }));
   } catch (error) {
     next(error);
   }
