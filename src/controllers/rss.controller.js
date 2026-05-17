@@ -28,14 +28,28 @@ export const getPostForSocial = async (req, res, next) => {
         videoUrl = mediaUrl;
 
         // YouTube
+        // YouTube (ampliado para soportar /embed/ y /shorts/)
         if (mediaUrl.includes("youtube.com") || mediaUrl.includes("youtu.be")) {
           let videoId = "";
+          // Formato estándar: youtube.com/watch?v=...
           if (mediaUrl.includes("youtube.com/watch?v=")) {
             videoId = mediaUrl.split("v=")[1]?.split("&")[0];
-          } else if (mediaUrl.includes("youtu.be/")) {
+          }
+          // Formato acortado: youtu.be/...
+          else if (mediaUrl.includes("youtu.be/")) {
             videoId = mediaUrl.split("youtu.be/")[1]?.split("?")[0];
           }
+          // NUEVO: Formato embed: youtube.com/embed/...
+          else if (mediaUrl.includes("youtube.com/embed/")) {
+            videoId = mediaUrl.split("/embed/")[1]?.split("?")[0];
+          }
+          // NUEVO: Formato Shorts: youtube.com/shorts/...
+          else if (mediaUrl.includes("youtube.com/shorts/")) {
+            videoId = mediaUrl.split("/shorts/")[1]?.split("?")[0];
+          }
+
           if (videoId) {
+            // Asigna la URL de la miniatura de máxima calidad
             imageUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
             videoType = "text/html";
           }
