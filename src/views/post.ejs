@@ -13,29 +13,37 @@
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="TrasmyFácil">
   
-  <% if (post.mediaUrl && post.mediaType === 'image') { %>
-    <meta property="og:image" content="<%= post.mediaUrl %>">
-    <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-  <% } else { %>
-    <meta property="og:image" content="<%= siteUrl %>/assets/logo_web.png">
-    <meta property="og:image:width" content="512">
-    <meta property="og:image:height" content="512">
-  <% } %>
+  <% 
+    // Función para convertir URL relativa en absoluta si es necesario
+    function toAbsoluteUrl(url) {
+      if (!url) return '';
+      if (url.startsWith('http://') || url.startsWith('https://')) return url;
+      if (url.startsWith('/')) return siteUrl + url;
+      return siteUrl + '/' + url;
+    }
+    
+    let imageUrl = '';
+    if (post.mediaUrl && post.mediaType === 'image') {
+      imageUrl = toAbsoluteUrl(post.mediaUrl);
+    } else {
+      imageUrl = siteUrl + '/assets/logo_web.png';
+    }
+  %>
+  
+  <meta property="og:image" content="<%= imageUrl %>">
+  <meta property="og:image:secure_url" content="<%= imageUrl %>">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="<%= post.title %>">
   <meta name="twitter:description" content="<%= post.content.substring(0, 160).replace(/"/g, '&quot;') %>">
-  <% if (post.mediaUrl && post.mediaType === 'image') { %>
-    <meta name="twitter:image" content="<%= post.mediaUrl %>">
-  <% } else { %>
-    <meta name="twitter:image" content="<%= siteUrl %>/assets/logo_web.png">
-  <% } %>
+  <meta name="twitter:image" content="<%= imageUrl %>">
   
-  <!-- Redirigir a la SPA de React después de que los bots escaneen -->
-  <meta http-equiv="refresh" content="0; url=<%= frontendUrl %>/informacion/<%= post._id %>">
+  <!-- Redirigir a la SPA de React después de que los bots escaneen (1 segundo) -->
+  <meta http-equiv="refresh" content="1; url=<%= frontendUrl %>/informacion/<%= post._id %>">
 </head>
 <body>
   <div style="text-align: center; padding: 40px; font-family: sans-serif;">
